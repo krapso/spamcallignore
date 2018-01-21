@@ -68,6 +68,8 @@ public class CommentService {
         }
     }
 
+    public List<CommentModel> getAllComments(){return listOfAllComments;}
+
     public CommentModel getMostRatedComment(){
         CommentModel commentModel = null;
         if(listOfAllComments.size()>0){

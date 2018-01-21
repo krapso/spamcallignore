@@ -6,11 +6,15 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.ContactsContract;
 import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import java.util.List;
 
@@ -47,15 +51,33 @@ public class IncomingCallReceiver extends BroadcastReceiver {
             if (state.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
                 //Phone is ringing
                 String incomingNumber = intent.getExtras().getString(TelephonyManager.EXTRA_INCOMING_NUMBER);
-                number = incomingNumber;
-                commentService = new CommentService(incomingNumber,mainHandler);
-                commentService.new InitTask().execute();
+                number = formatPhoneNumber(incomingNumber);
+                try{
+                    Double.valueOf(number);
+                    if(!contactExists(context,number)){
+                        commentService = new CommentService(number,mainHandler);
+                        commentService.new InitTask().execute();
+                    }
+                }catch (Exception e){
+                    Log.e("Error", "IncommingNumberError");
+                }
             } else if (state.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)) {
                 //Call received
             } else if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
                 //Call Dropped or rejected
             }
         }
+    }
+
+    public String formatPhoneNumber(String number){
+        String phoneNumber = number;
+        if(number.substring(0,4).equals("+421")){
+            phoneNumber = String.format("0%s",number.substring(4,number.length()));
+        }
+        if(number.substring(0,5).equals("00421")){
+            phoneNumber = String.format("0%s",number.substring(5,number.length()));
+        }
+        return phoneNumber;
     }
 
     public void getPhoneNumberInfo(){
@@ -99,5 +121,20 @@ public class IncomingCallReceiver extends BroadcastReceiver {
         notificationBuilder.setContentIntent(contentIntent);
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(NOTIFICATION_CHANNEL_ID, notificationBuilder.build());
+    }
+
+    public boolean contactExists(Context context, String number) {
+        Uri lookupUri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI,Uri.encode(number));
+        String[] mPhoneNumberProjection = { ContactsContract.PhoneLookup._ID, ContactsContract.PhoneLookup.NUMBER, ContactsContract.PhoneLookup.DISPLAY_NAME };
+        Cursor cur = context.getContentResolver().query(lookupUri,mPhoneNumberProjection, null, null, null);
+        try {
+            if (cur.moveToFirst()) {
+                return true;
+            }
+        } finally {
+            if (cur != null)
+                cur.close();
+        }
+        return false;
     }
 }
