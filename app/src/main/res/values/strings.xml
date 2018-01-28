@@ -1,4 +1,8 @@
 <resources>
-    <string name="app_name">SpamCallignore</string>
+    <string name="app_name">Spam Call</string>
     <string name="action_settings">Settings</string>
+
+    <string name="grant_permissions_text">Please Grant Permissions.</string>
+    <string name="enable_permissions_button">ENABLE</string>
+    <string name="rating_item">Rating: </string>
 </resources>

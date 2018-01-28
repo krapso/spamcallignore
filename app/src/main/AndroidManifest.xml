@@ -37,7 +37,9 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".NumberActivity"></activity>
+        <activity android:name=".NumberActivity"
+                  android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

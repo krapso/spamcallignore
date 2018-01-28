@@ -3,4 +3,12 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="circleMain">#48b3ff</color>
+    <color name="circleFirst">#1E88E5</color>
+    <color name="circleSecond">#303F9F</color>
+    <color name="circleThird">#4527A0</color>
+    <color name="mainBackground">#311B92</color>
+    <color name="circleStar">#43A047</color>
+    <color name="circleStop">#EF5350</color>
 </resources>
